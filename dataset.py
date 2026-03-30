@@ -36,6 +36,15 @@ NEGATIVE_WORDS = [
     "stressed",
     "hate",
     "boring",
+    "exhausted",
+    "hated",
+]
+
+POSITIVE_WORDS += [
+    "sick",  # slang positive: "this is sick" = cool
+    "fire",  # slang positive: "that view is fire"
+    "proud",
+    "loved",
 ]
 
 # ---------------------------------------------------------------------
@@ -50,6 +59,13 @@ SAMPLE_POSTS = [
     "This is fine",
     "So excited for the weekend",
     "I am not happy about this",
+    "Just got a promotion at work! 🎉 Can't believe it",
+    "Ugh, another Monday. Coffee is my only friend ☕",
+    "Lowkey excited for the party tonight but also kinda nervous 😬",
+    "This weather is straight fire 🔥 Loving this sunshine",
+    "Feeling meh about everything rn. Just vibing",
+    "No cap, that movie was trash 💩",
+    "Had a great time with friends, but now I'm exhausted 😴",
 ]
 
 # Human labels for each post above.
@@ -65,6 +81,13 @@ TRUE_LABELS = [
     "neutral",   # "This is fine"
     "positive",  # "So excited for the weekend"
     "negative",  # "I am not happy about this"
+    "positive",  # "Just got a promotion at work! 🎉 Can't believe it"
+    "mixed",     # "Ugh, another Monday. Coffee is my only friend ☕"
+    "mixed",     # "Lowkey excited for the party tonight but also kinda nervous 😬"
+    "positive",  # "This weather is straight fire 🔥 Loving this sunshine"
+    "neutral",   # "Feeling meh about everything rn. Just vibing"
+    "negative",  # "No cap, that movie was trash 💩"
+    "mixed",     # "Had a great time with friends, but now I'm exhausted 😴"
 ]
 
 # TODO: Add 5-10 more posts and labels.

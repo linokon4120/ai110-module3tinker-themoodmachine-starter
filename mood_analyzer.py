@@ -9,6 +9,7 @@ This class starts with very simple logic:
   - Convert that score into a mood label
 """
 
+import re
 from typing import List, Dict, Tuple, Optional
 
 from dataset import POSITIVE_WORDS, NEGATIVE_WORDS
@@ -53,7 +54,17 @@ class MoodAnalyzer:
           - Normalize repeated characters ("soooo" -> "soo")
         """
         cleaned = text.strip().lower()
+
+        # Normalize simple contractions
+        cleaned = cleaned.replace("i'm", "im")
+
+        # Remove punctuation from words but keep emoji Unicode characters.
+        cleaned = re.sub(r"[^\w\s🙂😂🥲💀☹️😢😞🔥😬☕💩]", " ", cleaned)
+
         tokens = cleaned.split()
+
+        # Temporary debug print to confirm tokens
+        print(f"Tokens: {tokens}")
 
         return tokens
 
@@ -75,15 +86,53 @@ class MoodAnalyzer:
           - Give some words higher weights than others (for example "hate" < "annoyed")
           - Treat emojis or slang (":)", "lol", "💀") as strong signals
         """
-        # TODO: Implement this method.
-        #   1. Call self.preprocess(text) to get tokens.
-        #   2. Loop over the tokens.
-        #   3. Increase the score for positive words, decrease for negative words.
-        #   4. Return the total score.
-        #
-        # Hint: if you implement negation, you may want to look at pairs of tokens,
-        # like ("not", "happy") or ("never", "fun").
-        pass
+        tokens = self.preprocess(text)
+        score = 0
+        i = 0
+
+        emoji_scores = {
+            "🙂": 1,
+            "😊": 1,
+            "😂": 1,
+            "🎉": 1,
+            "🔥": 1,
+            "💀": -1,
+            "☹️": -1,
+            "😢": -1,
+            "😞": -1,
+        }
+
+        while i < len(tokens):
+            token = tokens[i]
+            is_negated = False
+            if token == "not" and i + 1 < len(tokens):
+                is_negated = True
+                i += 1
+                token = tokens[i]
+
+            if token in emoji_scores:
+                score += emoji_scores[token]
+                print(f"Emoji: '{token}' -> score {emoji_scores[token]:+d}")
+            elif token in self.positive_words:
+                if is_negated:
+                    score -= 1
+                    print(f"Negated positive: '{token}' -> score -= 1")
+                else:
+                    score += 1
+                    print(f"Positive: '{token}' -> score += 1")
+            elif token in self.negative_words:
+                if is_negated:
+                    score += 1
+                    print(f"Negated negative: '{token}' -> score += 1")
+                else:
+                    score -= 1
+                    print(f"Negative: '{token}' -> score -= 1")
+            else:
+                print(f"Ignored: '{token}'")
+            i += 1
+
+        print(f"Final score: {score}")
+        return score
 
     # ---------------------------------------------------------------------
     # Label prediction
@@ -105,12 +154,13 @@ class MoodAnalyzer:
         Just remember that whatever labels you return should match the labels
         you use in TRUE_LABELS in dataset.py if you care about accuracy.
         """
-        # TODO: Implement this method.
-        #   1. Call self.score_text(text) to get the numeric score.
-        #   2. Return "positive" if the score is above 0.
-        #   3. Return "negative" if the score is below 0.
-        #   4. Return "neutral" otherwise.
-        pass
+        score = self.score_text(text)
+        if score > 0:
+            return "positive"
+        elif score < 0:
+            return "negative"
+        else:
+            return "neutral"
 
     # ---------------------------------------------------------------------
     # Explanations (optional but recommended)
